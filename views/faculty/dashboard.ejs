@@ -1,0 +1,64 @@
+<%- include('../layout') %>
+
+<div class="container-fluid">
+    <h2 class="mb-4">Faculty Dashboard</h2>
+
+    <% if (batches.length === 0) { %>
+        <div class="alert alert-info">
+            No batches have been assigned to you yet.
+        </div>
+    <% } else { %>
+        <!-- Batch Overview -->
+        <div class="row">
+            <% batches.forEach(batch => { %>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><%= batch.batchNumber %></h5>
+                            <a href="/faculty/batch/<%= batch._id %>" class="btn btn-light btn-sm">View Details</a>
+                        </div>
+                        <div class="card-body">
+                            <h6>Students:</h6>
+                            <ul class="list-group mb-3">
+                                <% batch.students.forEach(student => { %>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <%= student.name %> (<%= student.jntuNumber %>)
+                                        <span class="badge bg-primary rounded-pill">CGPA: <%= student.cgpa %></span>
+                                    </li>
+                                <% }); %>
+                            </ul>
+
+                            <!-- Quick Actions -->
+                            <div class="d-flex gap-2">
+                                <a href="/faculty/batch/<%= batch._id %>/files" class="btn btn-outline-primary">
+                                    <i class="fas fa-file me-1"></i> Files
+                                </a>
+                                <a href="/faculty/batch/<%= batch._id %>/reviews" class="btn btn-outline-success">
+                                    <i class="fas fa-tasks me-1"></i> Reviews
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Add Remark Form -->
+                        <div class="card-footer">
+                            <form action="/faculty/batch/<%= batch._id %>/remark" method="POST">
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        name="content"
+                                        class="form-control"
+                                        placeholder="Add a remark..."
+                                        required
+                                    >
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-comment"></i> Add
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</div> 

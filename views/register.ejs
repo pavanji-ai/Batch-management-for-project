@@ -1,0 +1,112 @@
+<%- include('layout') %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Register as <%= role.charAt(0).toUpperCase() + role.slice(1) %></h4>
+                </div>
+                <div class="card-body">
+                    <form action="/auth/register" method="POST">
+                        <input type="hidden" name="role" value="<%= role %>">
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                                placeholder="Enter your full name"
+                                required
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="Enter your email"
+                                required
+                            />
+                        </div>
+
+                        <% if (role === 'student') { %>
+                            <div class="mb-3">
+                                <label for="jntuNumber" class="form-label">JNTU Number</label>
+                                <input
+                                    type="text"
+                                    id="jntuNumber"
+                                    name="jntuNumber"
+                                    class="form-control"
+                                    placeholder="Enter your JNTU number"
+                                    required
+                                />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cgpa" class="form-label">CGPA</label>
+                                <input
+                                    type="number"
+                                    id="cgpa"
+                                    name="cgpa"
+                                    class="form-control"
+                                    placeholder="Enter your CGPA"
+                                    step="0.01"
+                                    min="0"
+                                    max="10"
+                                    required
+                                />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="branch" class="form-label">Branch</label>
+                                <select id="branch" name="branch" class="form-select" required>
+                                    <option value="">Select your branch</option>
+                                    <option value="CSE">Computer Science Engineering</option>
+                                    <option value="ECE">Electronics & Communication Engineering</option>
+                                    <option value="EEE">Electrical & Electronics Engineering</option>
+                                    <option value="MECH">Mechanical Engineering</option>
+                                    <option value="CIVIL">Civil Engineering</option>
+                                </select>
+                            </div>
+                        <% } %>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Enter your password"
+                                required
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input
+                                type="password"
+                                id="password2"
+                                name="password2"
+                                class="form-control"
+                                placeholder="Confirm your password"
+                                required
+                            />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Already have an account? <a href="/auth/login">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

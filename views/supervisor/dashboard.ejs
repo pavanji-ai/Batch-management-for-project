@@ -1,0 +1,129 @@
+<%- include('../layout') %>
+
+<div class="container-fluid">
+    <h2 class="mb-4">Supervisor Dashboard</h2>
+
+    <!-- Upload Student Data -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Upload Student Data</h5>
+        </div>
+        <div class="card-body">
+            <form action="/supervisor/upload-students" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="studentData" class="form-label">Upload Excel/CSV File</label>
+                    <input type="file" class="form-control" id="studentData" name="studentData" accept=".xlsx,.xls,.csv" required>
+                    <small class="text-muted">File should contain columns: name, email, jntuNumber, cgpa, branch</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload and Create Batches</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Batch Management -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Batch Management</h5>
+        </div>
+        <div class="card-body">
+            <% if (batches.length === 0) { %>
+                <div class="alert alert-info">
+                    No batches have been created yet. Upload student data to create batches.
+                </div>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Batch</th>
+                                <th>Students</th>
+                                <th>Faculty</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% batches.forEach(batch => { %>
+                                <tr>
+                                    <td><%= batch.batchNumber %></td>
+                                    <td>
+                                        <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#students<%= batch._id %>">
+                                            Show Students (<%= batch.students.length %>)
+                                        </button>
+                                        <div class="collapse" id="students<%= batch._id %>">
+                                            <ul class="list-unstyled mt-2">
+                                                <% batch.students.forEach(student => { %>
+                                                    <li class="d-flex justify-content-between align-items-center">
+                                                        <%= student.name %> (<%= student.jntuNumber %>)
+                                                        <form action="/supervisor/batch/<%= batch._id %>/remove-student/<%= student._id %>" method="POST" class="d-inline">
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                <% }); %>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form action="/supervisor/batch/<%= batch._id %>/reassign-faculty" method="POST" class="d-flex gap-2">
+                                            <select name="facultyId" class="form-select form-select-sm" required>
+                                                <option value="">Select Faculty</option>
+                                                <% faculty.forEach(f => { %>
+                                                    <option value="<%= f._id %>" <%= batch.faculty && f._id.toString() === batch.faculty._id.toString() ? 'selected' : '' %>>
+                                                        <%= f.name %>
+                                                    </option>
+                                                <% }); %>
+                                            </select>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <!-- Schedule Review Modal Trigger -->
+                                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleReview<%= batch._id %>">
+                                            <i class="fas fa-calendar-plus"></i> Schedule Review
+                                        </button>
+
+                                        <!-- View Details -->
+                                        <a href="/supervisor/batch/<%= batch._id %>" class="btn btn-success btn-sm">
+                                            <i class="fas fa-eye"></i> Details
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <!-- Schedule Review Modal -->
+                                <div class="modal fade" id="scheduleReview<%= batch._id %>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Schedule Technical Review - <%= batch.batchNumber %></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form action="/supervisor/batch/<%= batch._id %>/schedule-review" method="POST">
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="reviewDate" class="form-label">Review Date</label>
+                                                        <input type="datetime-local" class="form-control" id="reviewDate" name="reviewDate" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="description" class="form-label">Description</label>
+                                                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Schedule Review</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div> 

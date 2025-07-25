@@ -1,0 +1,105 @@
+<%- include('../layout') %>
+
+<div class="container-fluid">
+    <h2 class="mb-4">Student Dashboard</h2>
+
+    <% if (typeof message !== 'undefined') { %>
+        <div class="alert alert-info">
+            <%= message %>
+        </div>
+    <% } else { %>
+        <!-- Batch Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Batch Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Batch Number: <%= batch.batchNumber %></h6>
+                        <h6>Faculty Guide: <%= batch.faculty.name %></h6>
+                        <h6>Supervisor: <%= batch.supervisor.name %></h6>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Team Members:</h6>
+                        <ul class="list-unstyled">
+                            <% batch.students.forEach(student => { %>
+                                <li>
+                                    <%= student.name %> (<%= student.jntuNumber %>)
+                                    <% if (student._id.toString() === user._id.toString()) { %>
+                                        <span class="badge bg-primary">You</span>
+                                    <% } %>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Project Files -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Upload Project Files</h5>
+            </div>
+            <div class="card-body">
+                <form action="/student/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="projectFile" class="form-label">Select File (PDF, PPT, DOC)</label>
+                        <input type="file" class="form-control" id="projectFile" name="projectFile" accept=".pdf,.ppt,.pptx,.doc,.docx" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Upload File</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Recent Files -->
+                    <div class="col-md-6">
+                        <h6>Recent Files</h6>
+                        <% if (batch.projectFiles && batch.projectFiles.length > 0) { %>
+                            <ul class="list-group">
+                                <% batch.projectFiles.slice(-3).reverse().forEach(file => { %>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-file me-2"></i>
+                                        <%= file.fileName %>
+                                        <small class="text-muted">
+                                            (<%= new Date(file.uploadDate).toLocaleDateString() %>)
+                                        </small>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-muted">No files uploaded yet</p>
+                        <% } %>
+                    </div>
+
+                    <!-- Recent Remarks -->
+                    <div class="col-md-6">
+                        <h6>Recent Remarks</h6>
+                        <% if (batch.remarks && batch.remarks.length > 0) { %>
+                            <ul class="list-group">
+                                <% batch.remarks.slice(-3).reverse().forEach(remark => { %>
+                                    <li class="list-group-item">
+                                        <%= remark.content %>
+                                        <small class="text-muted d-block">
+                                            - <%= remark.author.name %> (<%= new Date(remark.date).toLocaleDateString() %>)
+                                        </small>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-muted">No remarks yet</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div> 
